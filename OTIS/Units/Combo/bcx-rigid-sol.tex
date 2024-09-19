@@ -1,0 +1,566 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[usenames,dvipsnames,svgnames]{xcolor}
+\usepackage[shortlabels]{enumitem}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{epigraph}
+\usepackage[colorlinks]{hyperref}
+\usepackage{microtype}
+\usepackage{mathtools}
+\usepackage[headsepline]{scrlayer-scrpage}
+\usepackage{thmtools}
+\usepackage{listings}
+\usepackage{derivative}
+\renewcommand{\epigraphsize}{\scriptsize}
+\renewcommand{\epigraphwidth}{60ex}
+\addtolength{\textheight}{3.14cm}
+\ihead{\footnotesize\textbf{BCX-rigid}}
+\ohead{\footnotesize Updated Wed 3 Jan 2024 02:39:32 UTC}
+\providecommand{\clubs}[1]{$#1\clubsuit$}
+\providecommand{\clubg}[1]{\bgroup\color{green!40!black}[$#1\clubsuit$]\egroup}
+
+\providecommand{\ol}{\overline}
+\providecommand{\eps}{\varepsilon}
+\providecommand{\half}{\frac{1}{2}}
+\providecommand{\dang}{\measuredangle} %% Directed angle
+\providecommand{\CC}{\mathbb C}
+\providecommand{\FF}{\mathbb F}
+\providecommand{\NN}{\mathbb N}
+\providecommand{\QQ}{\mathbb Q}
+\providecommand{\RR}{\mathbb R}
+\providecommand{\ZZ}{\mathbb Z}
+\providecommand{\dg}{^\circ}
+\providecommand{\ii}{\item}
+\providecommand{\alert}{\textbf}
+\providecommand{\opname}{\operatorname}
+\providecommand{\ts}{\textsuperscript}
+% hacks for arc
+\providecommand{\tarc}{\mbox{\large$\frown$}}
+\providecommand{\arc}[1]{\stackrel{\tarc}{#1}}
+\reversemarginpar
+\providecommand{\printpuid}[1]{\marginpar{\href{https://otis.evanchen.cc/arch/#1}{\ttfamily\footnotesize\color{green!40!black}#1}}}
+
+\mdfdefinestyle{mdbluebox}{roundcorner=10pt,innerbottommargin=9pt,
+    linecolor=blue,backgroundcolor=TealBlue!5,}
+\declaretheoremstyle[headfont=\sffamily\bfseries\color{MidnightBlue},
+    mdframed={style=mdbluebox},]{thmbluebox}
+\mdfdefinestyle{mdredbox}{frametitlefont=\bfseries,innerbottommargin=8pt,
+    nobreak=true,backgroundcolor=Salmon!5,linecolor=RawSienna,}
+\declaretheoremstyle[headfont=\bfseries\color{RawSienna},
+    mdframed={style=mdredbox},headpunct={\\[3pt]},postheadspace=0pt,]{thmredbox}
+\mdfdefinestyle{mdgreenbox}{linecolor=ForestGreen,backgroundcolor=ForestGreen!5,
+    linewidth=2pt,rightline=false,leftline=true,topline=false,bottomline=false,}
+\declaretheoremstyle[headfont=\bfseries\sffamily\color{ForestGreen!70!black},
+    mdframed={style=mdgreenbox},headpunct={ --- },]{thmgreenbox}
+\mdfdefinestyle{mdblackbox}{linecolor=black,backgroundcolor=RedViolet!5!gray!5,
+    linewidth=3pt,rightline=false,leftline=true,topline=false,bottomline=false,}
+\declaretheoremstyle[mdframed={style=mdblackbox}]{thmblackbox}
+\declaretheorem[style=thmredbox,name=Problem]{problem}
+\declaretheorem[style=thmredbox,name=Required Problem,sibling=problem]{reqproblem}
+\declaretheorem[style=thmbluebox,name=Theorem,numberwithin=problem]{theorem}
+\declaretheorem[style=thmbluebox,name=Lemma,sibling=theorem]{lemma}
+\declaretheorem[style=thmbluebox,name=Theorem,numbered=no]{theorem*}
+\declaretheorem[style=thmbluebox,name=Lemma,numbered=no]{lemma*}
+\declaretheorem[style=thmgreenbox,name=Claim,sibling=theorem]{claim}
+\declaretheorem[style=thmgreenbox,name=Claim,numbered=no]{claim*}
+\declaretheorem[style=thmblackbox,name=Remark,sibling=theorem]{remark}
+\declaretheorem[style=thmblackbox,name=Remark,numbered=no]{remark*}
+\declaretheorem[style=thmgreenbox,name=Definition,sibling=theorem]{definition}
+\declaretheorem[style=thmgreenbox,name=Definition,numbered=no]{definition*}
+\declaretheorem[style=thmblackbox,name=Example,sibling=theorem]{example}
+\declaretheorem[style=thmblackbox,name=Example,numbered=no]{example*}
+
+\newenvironment{walkthrough}{\noindent\textbf{\color{green!40!black}Walkthrough.}}{}
+\newlist{walk}{enumerate}{3}
+\setlist[walk]{label=\bfseries (\alph*)}
+
+\usepackage{asymptote}
+\begin{asydef}
+size(8cm); // set a reasonable default
+usepackage("amsmath");
+usepackage("amssymb");
+settings.tex="pdflatex";
+settings.outformat="pdf";
+import geometry;
+void filldraw(picture pic = currentpicture, conic g, pen fillpen=defaultpen, pen drawpen=defaultpen) { filldraw(pic, (path) g, fillpen, drawpen); }
+void fill(picture pic = currentpicture, conic g, pen p=defaultpen) { filldraw(pic, (path) g, p); }
+pair foot(pair P, pair A, pair B) { return foot(triangle(A,B,P).VC); }
+pair centroid(pair A, pair B, pair C) { return (A+B+C)/3; }
+\end{asydef}
+
+\newcommand{\goals}[2]{\bgroup
+\sffamily\small \emph{Instructions}: Solve \clubg{#1}.
+If you have time, solve \clubg{#2}.\egroup\par}
+
+%% 426c616e6b204c615465587e
+\begin{document}
+\title{Submission for BCX-RIGID}
+\subtitle{OTIS (internal use)}
+\author{YOUR NAME HERE}
+\date{\today}
+\maketitle
+
+\begin{example*}[\href{https://aops.com/community/p6580534}{TSTST 2016/4}, $0\clubsuit$]
+  Prove that if $n$ and $k$ are positive integers
+  satisfying $\varphi^k(n) = 1$, then $n \le 3^k$.
+  (Here $\varphi^k$ denotes $k$ applications of the Euler phi function.)
+\end{example*} \printpuid{16TSTST4}
+
+\begin{walkthrough}
+Let $a$, $b$, $c$, \dots, denote positive integers.
+\begin{walk}
+  \ii For positive integers $a$, $b$,
+  show that $n = 2^a \cdot 3^b$ takes $a+b$ steps.
+  \ii How many steps does each of $n = 2^a 5^b$,
+  $n = 2^a 17^b$, $2^a 3^b 7^c$, $2^a 11^b$ take?
+  \ii Show that $2^a 2017^b$ takes $a+9b$ steps.
+  \ii Define the function $w \colon \NN \to \ZZ_{\ge 0}$
+  by $w(ab) = w(a) + w(b)$, $w(2)=1$,
+  and $w(p) = w(p-1)$ for odd primes $p$.
+  Figure out the connection between the values of $w(p)$
+  and the answer to your answer in (b).
+  \ii By looking at $\nu_2$ prove the conjecture in (d).
+  \ii Show that $w(n)$ is the number of steps required for $n$,
+  if $n$ is even. What if $n$ is odd?
+  \ii Show that $w(n) \ge \log_3 n$ by induction on $n \ge 1$.
+  (The case where $n$ is composite is immediate,
+  so the only work is when $n$ is prime.)
+  \ii In fact, prove that the stronger
+  estimate $n \le 2 \cdot 3^{k-1}$ holds (and is best possible).
+\end{walk}
+As a rigid problem, this is a chief example:
+the point of the problem is to determine the function $w$,
+and the ``extraction'' of comparing to $\log_3$ occurs at the end.
+It's important to realize that $w$ is ``God-given'';
+we were not permitted any decisions in deriving it.
+
+It might be tempting to try and prove $\varphi(n) \ge n/3$
+or similar statements, but this is false,
+and in any case not representative of small cases.
+However, I think trying the ``small cases'':
+which in this situation are those $n$ with relatively
+few prime factors --- suggests that this is the wrong approach.
+\end{walkthrough}
+%% You're not expected to write up walkthroughs (unless you really want to).
+%% The source is just for your reference.
+
+\begin{example*}[\href{https://aops.com/community/p9654050}{China TST 2018/2/3}, $0\clubsuit$]
+  Two positive integers $p$ and $q$ are fixed.
+  There is a blackboard with $n$ positive integers written on it.
+  An operation is to choose two of the same number $a$, $a$
+  written on the blackboard, and replace them with $a+p$, $a+q$.
+  Determine the smallest $n$ (in terms of $p$ and $q$) for which
+  such an operation could go on infinitely.
+\end{example*} \printpuid{18CHNTST23}
+
+\begin{walkthrough}
+\begin{walk}
+  \ii Reduce the problem to the case where $\gcd(p,q) = 1$.
+  (Hint: if $d \coloneqq \gcd(p,q) > 1$, then work modulo $d$.)
+  \ii Come up with a guess for the answer.
+  It might be helpful to try $(p,q) = (n,1)$ and $(p,q) = (3,2)$.
+  \ii It might seem right now the problem is not that rigid,
+  because for example one gets to make a choice at each step of the process
+  what numbers are supposed to be erased.
+  But consider actually the smallest number on the board.
+  What can you say about it?
+  \ii Use your answer to (c) to eliminate the illusion of choice:
+  prove that we can WLOG assume that we always operate on the smallest number.
+  (You should assume $n$ is minimal for this part,
+  meaning every entry is changed infinitely often.)
+  \ii Assume that the smallest number on the board initially is $0$.
+  Make sense of the following table,
+  which is an example for $(p,q) = (3,5)$.
+  \[
+  \begin{bmatrix}
+    0 & 0 \\
+    3 & 5 & 3 \\
+    6 & 5 & 8 & 5 \\
+    6 & 10 & 8 & 8 & 6 \\
+    9 & 10 & 8 & 8 & 11 \\
+    9 & 10 & 13 & 11 & 11 & 9 \\
+    12 & 10 & 13 & 14 & 16 & 14 \\
+    12 & 10 & 13 & 14 & 16 & 14 & 10 \\
+    12 & 15 & 13 & 14 & 16 & 14 & 13 & 12 \\ \hline
+    15 & 15 & 13 & 14 & 16 & 14 & 13 & 17 \\
+    15 & 15 & 18 & 14 & 16 & 14 & 16 & 17 \\
+    15 & 15 & 18 & 17 & 16 & 19 & 16 & 17 \\
+    18 & 20 & 18 & 17 & 16 & 19 & 16 & 17 \\
+  \end{bmatrix}
+  \]
+  \ii Come up with a construction with the minimal number of elements
+  for which the process goes on indefinitely.
+  (For example, use engineer's induction on the last rows
+  of the example above.)
+  \ii Study the first nonzero numbers in each column
+  of the above table, and come up with a guess for what they are
+  in terms of $p$ and $q$ in general.
+  We'll denote the set of such numbers by $S$.
+  \ii Show that we set up the table above in such a way
+  that the first two columns contain every element of $S$.
+  \ii Prove that for every $s \in S$,
+  there exists a column $C$ (not including the first two)
+  such that $\max(S \cap C) = s$.
+  \ii Use this to show that the minimum you conjectured is correct.
+\end{walk}
+This example is interesting because of part (c);
+it's a surprising example of a problem which does not
+look rigid at all when we first glance at it,
+but then turns out to lose most of its degrees of freedom
+after a bit of thinking.
+In that way we get a problem which really only has two
+parameters $p$ and $q$ and can make much progress
+by studying the resulting table.
+\end{walkthrough}
+%% You're not expected to write up walkthroughs (unless you really want to).
+%% The source is just for your reference.
+
+\begin{example*}[\href{https://aops.com/community/p2745872}{TSTST 2012/8}, $0\clubsuit$]
+  Let $n$ be a positive integer.
+  Consider a triangular array of nonnegative integers as follows:
+  \begin{center}
+  \begin{asy}
+  size(8cm);
+  defaultpen(fontsize(10pt));
+  label(scale(0.8)*"Row $1$:", (-6, 2.9));
+  label(scale(0.8)*"Row $2$:", (-6, 2.2));
+  label(scale(0.8)*"$\vdots$", (-6, 1.5));
+  label(scale(0.8)*"Row $n-1$:", (-6, 0.8));
+  label(scale(0.8)*"Row $n$:", (-6, 0.1));
+
+  label("$a_{0,1}$", (0,2.8));
+
+  label("$a_{0,2}$", (-1,2.1));
+  label("$a_{1,2}$", ( 1,2.1));
+
+  label(rotate(90)*"$\ddots$", (-2,1.5));
+  label("$\vdots$", ( 0,1.5));
+  label("$\ddots$", ( 2,1.5));
+
+  label("$a_{0,n-1}$", (-3,0.7));
+  label("$a_{1,n-1}$", (-1,0.7));
+  label("$\dots$", (1,0.7));
+  label("$a_{n-2,n-1}$", (3,0.7));
+
+  label("$a_{0,n}$", (-4,0));
+  label("$a_{1,n}$", (-2,0));
+  label("$a_{2,n}$", (-0,0));
+  label("$\dots$", (2,0));
+  label("$a_{n-1,n}$", (4,0));
+  \end{asy}
+  \end{center}
+  Call such a triangular array \textit{stable} if for every $0 \le i < j < k \le n$ we have
+  \[ a_{i,j} + a_{j,k} \le a_{i,k} \le a_{i,j} + a_{j,k} + 1. \]
+  For $s_1$, \dots, $s_n$ any nondecreasing sequence of nonnegative integers,
+  prove that there exists a unique stable triangular array such that
+  the sum of all of the entries in row $k$ is equal to $s_k$.
+\end{example*} \printpuid{12TSTST8}
+
+\begin{walkthrough}
+We'll use induction on $n$, so essentially fixing the first $n-1$ rows
+with the values of $s_1$, \dots, $s_{n-1}$.
+\begin{walk}
+  \ii Left-aligning the array, consider the example:
+  \[
+  \begin{bmatrix}
+    2 \\
+    4 & 1 \\
+    5 & 3 & 1 \\
+    5 & 3 & 1 & 0
+  \end{bmatrix}
+  \]
+  Verify that this is a stable array with
+  $(s_1, s_2, s_3, s_4) = (2,5,9,9)$.
+  \ii Write down the unique stable arrays
+  for $(s_1, s_2, s_3, s_4) = (2,5,9,x)$
+  when $x \in \{10, 11, 12, 13, 14\}$.
+  You should find that one entry changes at each step.
+  The final array should be:
+  \[
+  \begin{bmatrix}
+    2 \\
+    4 & 1 \\
+    5 & 3 & 1 \\
+    7 & 4 & 2 & 1
+  \end{bmatrix}
+  \]
+  \ii In part (b) you likely found that
+  each of the entries in the bottom row interacts
+  with another entry,
+  and there was always exactly one entry that could be incremented by $1$.
+  Find a natural way to construct a \emph{tournament}
+  on the bottom row such that an entry can be incremented
+  if and only if it is a source (all edges point away from it).
+  \ii What property does this tournament have
+  that ensures exactly one vertex is a source at each step?
+  Verify your conjecture directly from the definition of a stable array.
+  \ii Using what you have found,
+  prove existence using induction on $s_n$.
+  \ii Prove uniqueness of $s_n$.
+  One way to do this is to again use induction,
+  using again the tournament property you found in (d) a couple times.
+  There is also a direct proof that is less motivated, by bounding.
+\end{walk}
+This problem is especially amenable to ``rigid''-type thinking due
+to the guarantee that there exists a \emph{unique} stable array for each $(s_n)_n$.
+Thus you are essentially guaranteed that all the examples you
+come up with when playing with the problem are ``the'' examples.
+This allows you to verify \emph{from data} for example
+that the stable arrays going from $s_n \to s_n + 1$
+are indeed just increasing one entry by one.
+Part (b) of this walkthrough is critical,
+because that is the data on which the later claims are based.
+\end{walkthrough}
+%% You're not expected to write up walkthroughs (unless you really want to).
+%% The source is just for your reference.
+
+\newpage
+
+% ========================================
+\section*{Practice problems}
+\goals{32}{40}
+
+\epigraph{The only thing I'm really good at is\dots\
+That's it! BARKING! There really isn't much else in life!}
+{Missile in \emph{Ghost Trick}}
+
+\begin{problem}[\href{https://aops.com/community/p1219486}{Shortlist 1995}, $3\clubsuit$]
+  For an integer $x \geq 1$,
+  let $p(x)$ be the least prime that does not divide $x$,
+  and define $q(x)$ to be the product of all primes less than $p(x)$.
+  In particular, $p(1) = 2$.
+  For $x$ having $p(x) = 2$, define $q(x) = 1$.
+  Consider the sequence $x_0, x_1, x_2, \dots$
+  defined by $x_0 = 1$ and
+  \[ x_{n+1} = \frac{x_n p(x_n)}{q(x_n)} \] for $n \geq 0$.
+  Find all $n$ such that $x_n = 1995$.
+\end{problem} \printpuid{95SLS3}
+
+\begin{proof}
+THe solutions are all $n$,$\forall n \in \mathbb R$
+\end{proof}
+
+\begin{problem}[\href{https://aops.com/community/p8633268}{IMO 2017/1}, $3\clubsuit$]
+  For each integer $a_0 > 1$, define the sequence $a_0$, $a_1$, $a_2$,
+  \dots, by
+  \[
+  a_{n+1} =
+  \begin{cases}
+  \sqrt{a_n} & \text{if $\sqrt{a_n}$ is an integer,} \\
+  a_n + 3 & \text{otherwise}
+  \end{cases}
+  \]
+  for each $n \ge 0$.
+  Determine all values of $a_0$ for which there is a number $A$
+  such that $a_n = A$ for infinitely many values of $n$.
+\end{problem} \printpuid{17IMO1}
+
+%% Type your solution to IMO 2017/1 (\href{https://otis.evanchen.cc/arch/17IMO1/}{17IMO1}), proposed by Stephan Wagner (SAF) here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[NICE 2021/1, $2\clubsuit$]
+  The \textit{fibboican} sequence $a_1$, $a_2$, $\dots$
+  is defined by $a_1 = a_2 = 1$, and for integers $k \geq 3$,
+  \begin{itemize}
+  \item $a_k = a_{k-1} + a_{k-2}$ if $k$ is odd
+  \item $\frac {1}{a_k} = \frac {1}{a_{k-1}} + \frac {1}{a_{k-2}}$
+  if $k$ is even.
+  \end{itemize}
+  Prove that, for each integer $m\ge 1$,
+  the numerator of $a_m$ (when written in simplest form)
+  is a power of $2$.
+\end{problem} \printpuid{21NICE1}
+
+%% Type your solution to NICE 2021/1 (\href{https://otis.evanchen.cc/arch/21NICE1/}{21NICE1}) here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[MOP 2011, $2\clubsuit$]
+  Let $S$ be a finite set with $|S| > 1$ and
+  let $\mathcal P(S)$ denote the set of all subsets of $S$.
+  A function $f \colon \mathcal P(S) \to \mathcal P(S)$
+  is called \emph{united} if $f(\emptyset) = \emptyset$
+  and $f(A) \cup f(B) = f(A \cup B)$ for any $A, B \in \mathcal P(S)$.
+  Show that the number of united functions
+  is a perfect power.
+\end{problem} \printpuid{11MOPR32}
+
+%% Type your solution to MOP 2011 (\href{https://otis.evanchen.cc/arch/11MOPR32/}{11MOPR32}) here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p22698309}{Shortlist 2020 C1}, $2\clubsuit$]
+  Let $n$ be a positive integer.
+  Find the number of permutations $a_1,\ \dots,\ a_n$
+  of $1,\ \dots,\ n$ satisfying
+  \[ a_1 \le 2a_2 \le \dotsb \le na_n. \]
+\end{problem} \printpuid{20SLC1}
+
+%% Type your solution to Shortlist 2020 C1 (\href{https://otis.evanchen.cc/arch/20SLC1/}{20SLC1}) here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p26491041}{Brazil EGMO TST 2023/3, added by Isken Kenzhebaev}, $2\clubsuit$]
+  Let $n \ge 1$ be a fixed positive integer.
+  Max and Lewis play a turn-based game with a pile of $n$ stones.
+  Max makes the first move and must remove exactly $1$ stone.
+  In each subsequent turn, the player to move may remove between $1$ and $t+1$
+  stones, where $t$ is the number of stones removed by the previous player.
+  A player wins if they remove the last stone.
+  For each $n$, determine which player has the winning strategy.
+\end{problem} \printpuid{23BRAEST3}
+
+%% Type your solution to Brazil EGMO TST 2023/3, added by Isken Kenzhebaev (\href{https://otis.evanchen.cc/arch/23BRAEST3/}{23BRAEST3}) here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p741371}{Shortlist 2006 A1}, $3\clubsuit$]
+  A sequence of real numbers $a_0$, $a_1$, \dots\
+  is defined recursively by
+  \[ a_{i+1} = \left\lfloor a_i \right\rfloor
+  \cdot \left\{ a_i \right\} \]
+  for $i \ge 0$, where $\{x\} = x - \left\lfloor x \right\rfloor$
+  is the fractional part.
+  Prove that $a_{i+2} = a_i$ for sufficiently large indices $i$.
+\end{problem} \printpuid{06SLA1}
+
+%% Type your solution to Shortlist 2006 A1 (\href{https://otis.evanchen.cc/arch/06SLA1/}{06SLA1}) here ...
+
+%% --------------------------------------------------
+
+\begin{reqproblem}[\href{https://aops.com/community/p12752847}{IMO 2019/5}, $5\clubsuit$]
+  Let $n$ be a positive integer.
+  Harry has $n$ coins lined up on his desk, which can show either heads or tails.
+  He does the following operation: if there are $k$ coins which show heads and $k > 0$,
+  then he flips the $k$th coin over; otherwise he stops the process.
+  (For example, the process starting with $THT$ would be
+  $THT \to HHT \to HTT \to TTT$, which takes three steps.)
+
+  Prove the process will always terminate, and determine the average number of steps
+  this takes over all $2^n$ configurations.
+\end{reqproblem} \printpuid{19IMO5}
+
+%% Type your solution to IMO 2019/5 (\href{https://otis.evanchen.cc/arch/19IMO5/}{19IMO5}), proposed by David Altizio (USA) here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p1187174}{Shortlist 2007 C1}, $5\clubsuit$]
+  Let $n \ge 1$ be an integer. Find all sequences
+  $a_1$, $a_2$, \dots, $a_{n^2 + n}$ consisting of $0$ and $1$ such that
+  \[ a_{i+1} + a_{i+2} + \dots + a_{i+n}
+  < a_{i+n+1} + a_{i+n+2} + \dots + a_{i+2n} \]
+  for all $0 \le i \le n^2-n$.
+\end{problem} \printpuid{07SLC1}
+
+%% Type your solution to Shortlist 2007 C1 (\href{https://otis.evanchen.cc/arch/07SLC1/}{07SLC1}) here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p17829263}{Shortlist 2019 C1}, $5\clubsuit$]
+  The infinite sequence $a_0$, $a_1$, \dots of integers
+  satisfies the relations $0 \le a_n \le n$ and
+  \[ \binom{n}{a_0} + \binom{n}{a_1} + \dots + \binom{n}{a_n} = 2^n \]
+  for every nonnegative integer $n$.
+  Show that every nonnegative integer appears in the sequence.
+\end{problem} \printpuid{19SLC1}
+
+%% Type your solution to Shortlist 2019 C1 (\href{https://otis.evanchen.cc/arch/19SLC1/}{19SLC1}) here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p3043748}{JMO 2013/4}, $3\clubsuit$]
+  Let $f(n)$ be the number of ways to write $n$ as a sum of powers of $2$,
+  where we keep track of the order of the summation.
+  For example, $f(4)=6$ because $4$ can be written
+  as $4$, $2+2$, $2+1+1$, $1+2+1$, $1+1+2$, and $1+1+1+1$.
+  Find the smallest $n$ greater than $2013$ for which $f(n)$ is odd.
+\end{problem} \printpuid{13JMO4}
+
+%% Type your solution to JMO 2013/4 (\href{https://otis.evanchen.cc/arch/13JMO4/}{13JMO4}), proposed by Kiran Kedlaya here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p124444}{Shortlist 1998 N8}, $3\clubsuit$]
+  Let $a_{0}$, $a_{1}$, $a_{2}$, \dots\ be an increasing sequence of nonnegative integers
+  such that every nonnegative integer can be expressed
+  uniquely in the form $a_{i}+2a_{j}+4a_{k}$,
+  where $i$, $j$ and $k$ are not necessarily distinct.
+  Determine $a_{1998}$.
+\end{problem} \printpuid{98SLN8}
+
+%% Type your solution to Shortlist 1998 N8 (\href{https://otis.evanchen.cc/arch/98SLN8/}{98SLN8}) here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p281572}{IMO 2005/2}, $3\clubsuit$]
+  Let $a_1$, $a_2$, \dots\ be a sequence of integers
+  with infinitely many positive and negative terms.
+  Suppose that for every positive integer $n$
+  the numbers $a_1$, $a_2$, \dots, $a_n$
+  leave $n$ different remainders upon division by $n$.
+  Prove that every integer occurs exactly once in the sequence.
+\end{problem} \printpuid{05IMO2}
+
+%% Type your solution to IMO 2005/2 (\href{https://otis.evanchen.cc/arch/05IMO2/}{05IMO2}), proposed by Nicholas de Bruijn (NLD) here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p10561203}{APMO 2018/4}, $5\clubsuit$]
+  Let $ABC$ be an equilateral triangle.
+  From the vertex of $A$ we draw a ray towards the interior of the triangle
+  such that the ray reaches one of the sides of the triangle.
+  When the ray reaches a side, it then bounces off following the \emph{law of reflection}.
+  After $n$ bounces the ray returns to $A$ without ever
+  landing on any of the other two vertices.
+  Find all possible values of $n$.
+\end{problem} \printpuid{18APMO4}
+
+%% Type your solution to APMO 2018/4 (\href{https://otis.evanchen.cc/arch/18APMO4/}{18APMO4}) here ...
+
+%% --------------------------------------------------
+
+\begin{reqproblem}[\href{https://aops.com/community/p4725316}{EGMO 2015/2}, $5\clubsuit$]
+  A \emph{domino} is a $2 \times 1$ or $1 \times 2$ tile.
+  Determine in how many ways exactly $n^2$ dominoes can be placed
+  without overlapping on a $2n \times 2n$ chessboard
+  so that every $2 \times 2$ square contains at least
+  two uncovered unit squares which lie in the same row or column.
+\end{reqproblem} \printpuid{15EGMO2}
+
+%% Type your solution to EGMO 2015/2 (\href{https://otis.evanchen.cc/arch/15EGMO2/}{15EGMO2}) here ...
+
+%% --------------------------------------------------
+
+\begin{reqproblem}[\href{https://aops.com/community/p4769949}{USAMO 2015/3}, $9\clubsuit$]
+  Let $S = \left\{ 1,2,\dots,n \right\}$, where $n \ge 1$.
+  Each of the $2^n$ subsets of $S$ is to be colored red or blue.
+  (The subset itself is assigned a color and not its individual elements.)
+  For any set $T \subseteq S$,
+  we then write $f(T)$ for the number of subsets of $T$ that are blue.
+
+  Determine the number of colorings that satisfy the following condition:
+  for any subsets $T_1$ and $T_2$ of $S$,
+  \[ f(T_1)f(T_2) = f(T_1 \cup T_2)f(T_1 \cap T_2). \]
+\end{reqproblem} \printpuid{15AMO3}
+
+%% Type your solution to USAMO 2015/3 (\href{https://otis.evanchen.cc/arch/15AMO3/}{15AMO3}), proposed by Gabriel Carroll here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p4663881}{APMO 2015/3, added by Haozhe Yang}, $5\clubsuit$]
+  Find the smallest positive integer $n$ such that
+  there exists a sequence $a_0$, $a_1$, \dots of real numbers such that:
+  \begin{enumerate}[(i)]
+  \ii $a_0$ is a positive integer;
+  \ii for each nonnegative integer $i$ we have
+  either $a_{i+1} = 2a_i + 1$ or $a_{i+1} =\frac{a_i}{a_i + 2}$.
+  \ii $a_n = 2014$.
+  \end{enumerate}
+\end{problem} \printpuid{15APMO3}
+
+%% Type your solution to APMO 2015/3, added by Haozhe Yang (\href{https://otis.evanchen.cc/arch/15APMO3/}{15APMO3}), proposed by Wang Wei Hua (HKG) here ...
+
+%% --------------------------------------------------
+
+\end{document}

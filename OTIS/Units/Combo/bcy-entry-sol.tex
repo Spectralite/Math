@@ -1,0 +1,845 @@
+\documentclass[11pt]{scrartcl}
+% \usepackage[sexy]{evan}
+\usepackage[usenames,dvipsnames,svgnames]{xcolor}
+\usepackage[shortlabels]{enumitem}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{epigraph}
+\usepackage{asymptote}
+\usepackage[colorlinks]{hyperref}
+\usepackage{microtype}
+\usepackage{mathtools}
+\usepackage[headsepline]{scrlayer-scrpage}
+\usepackage{thmtools}
+\usepackage{listings}
+\usepackage{derivative}
+\renewcommand{\epigraphsize}{\scriptsize}
+\renewcommand{\epigraphwidth}{60ex}
+\addtolength{\textheight}{3.14cm}
+\ihead{\footnotesize\textbf{BCY-entry}}
+\ohead{\footnotesize Updated Sun 4 Feb 2024 17:44:05 UTC}
+\providecommand{\clubs}[1]{$#1\clubsuit$}
+\providecommand{\clubg}[1]{\bgroup\color{green!40!black}[$#1\clubsuit$]\egroup}
+
+\providecommand{\ol}{\overline}
+\providecommand{\eps}{\varepsilon}
+\providecommand{\half}{\frac{1}{2}}
+\providecommand{\dang}{\measuredangle} %% Directed angle
+\providecommand{\CC}{\mathbb C}
+\providecommand{\FF}{\mathbb F}
+\providecommand{\NN}{\mathbb N}
+\providecommand{\QQ}{\mathbb Q}
+\providecommand{\RR}{\mathbb R}
+\providecommand{\ZZ}{\mathbb Z}
+\providecommand{\dg}{^\circ}
+\providecommand{\ii}{\item}
+\providecommand{\alert}{\textbf}
+\providecommand{\opname}{\operatorname}
+\providecommand{\ts}{\textsuperscript}
+% hacks for arc
+\providecommand{\tarc}{\mbox{\large$\frown$}}
+\providecommand{\arc}[1]{\stackrel{\tarc}{#1}}
+\reversemarginpar
+\providecommand{\printpuid}[1]{\marginpar{\href{https://otis.evanchen.cc/arch/#1}{\ttfamily\footnotesize\color{green!40!black}#1}}}
+
+\mdfdefinestyle{mdbluebox}{roundcorner=10pt,innerbottommargin=9pt,
+    linecolor=blue,backgroundcolor=TealBlue!5,}
+\declaretheoremstyle[headfont=\sffamily\bfseries\color{MidnightBlue},
+    mdframed={style=mdbluebox},]{thmbluebox}
+\mdfdefinestyle{mdredbox}{frametitlefont=\bfseries,innerbottommargin=8pt,
+    nobreak=true,backgroundcolor=Salmon!5,linecolor=RawSienna,}
+\declaretheoremstyle[headfont=\bfseries\color{RawSienna},
+    mdframed={style=mdredbox},headpunct={\\[3pt]},postheadspace=0pt,]{thmredbox}
+\mdfdefinestyle{mdgreenbox}{linecolor=ForestGreen,backgroundcolor=ForestGreen!5,
+    linewidth=2pt,rightline=false,leftline=true,topline=false,bottomline=false,}
+\declaretheoremstyle[headfont=\bfseries\sffamily\color{ForestGreen!70!black},
+    mdframed={style=mdgreenbox},headpunct={ --- },]{thmgreenbox}
+\mdfdefinestyle{mdblackbox}{linecolor=black,backgroundcolor=RedViolet!5!gray!5,
+    linewidth=3pt,rightline=false,leftline=true,topline=false,bottomline=false,}
+\declaretheoremstyle[mdframed={style=mdblackbox}]{thmblackbox}
+\declaretheorem[style=thmredbox,name=Problem]{problem}
+\declaretheorem[style=thmredbox,name=Required Problem,sibling=problem]{reqproblem}
+\declaretheorem[style=thmbluebox,name=Theorem,numberwithin=problem]{theorem}
+\declaretheorem[style=thmbluebox,name=Lemma,sibling=theorem]{lemma}
+\declaretheorem[style=thmbluebox,name=Theorem,numbered=no]{theorem*}
+\declaretheorem[style=thmbluebox,name=Lemma,numbered=no]{lemma*}
+\declaretheorem[style=thmgreenbox,name=Claim,sibling=theorem]{claim}
+\declaretheorem[style=thmgreenbox,name=Claim,numbered=no]{claim*}
+\declaretheorem[style=thmblackbox,name=Remark,sibling=theorem]{remark}
+\declaretheorem[style=thmblackbox,name=Remark,numbered=no]{remark*}
+\declaretheorem[style=thmgreenbox,name=Definition,sibling=theorem]{definition}
+\declaretheorem[style=thmgreenbox,name=Definition,numbered=no]{definition*}
+\declaretheorem[style=thmblackbox,name=Example,sibling=theorem]{example}
+\declaretheorem[style=thmblackbox,name=Example,numbered=no]{example*}
+
+\newenvironment{walkthrough}{\noindent\textbf{\color{green!40!black}Walkthrough.}}{}
+\newlist{walk}{enumerate}{3}
+\setlist[walk]{label=\bfseries (\alph*)}
+
+\usepackage{asymptote}
+\begin{asydef}
+size(8cm); // set a reasonable default
+usepackage("amsmath");
+usepackage("amssymb");
+settings.tex="pdflatex";
+settings.outformat="pdf";
+import geometry;
+void filldraw(picture pic = currentpicture, conic g, pen fillpen=defaultpen, pen drawpen=defaultpen) { filldraw(pic, (path) g, fillpen, drawpen); }
+void fill(picture pic = currentpicture, conic g, pen p=defaultpen) { filldraw(pic, (path) g, p); }
+pair foot(pair P, pair A, pair B) { return foot(triangle(A,B,P).VC); }
+pair centroid(pair A, pair B, pair C) { return (A+B+C)/3; }
+\end{asydef}
+
+\newcommand{\goals}[2]{\bgroup
+\sffamily\small \emph{Instructions}: Solve \clubg{#1}.
+If you have time, solve \clubg{#2}.\egroup\par}
+
+%% 426c616e6b204c615465587e
+\begin{document}
+\title{Submission for BCY-ENTRY}
+\subtitle{OTIS (internal use)}
+\author{Eyobell Ghirmay}
+\date{\today}
+\maketitle
+\begin{example*}[\href{https://aops.com/community/p3355365}{NIMO Winter 2014/2}, $0\clubsuit$]
+  Determine, with proof, the smallest positive integer $c$
+  such that for any positive integer $n$,
+  the decimal representation of the number $c^n+2014$ has digits all less than $5$.
+\end{example*} \printpuid{14NIMOW2}
+
+\begin{walkthrough}
+This is quite easy; it's just meant to give a concrete example
+of a bi-directional problem.
+\begin{walk}
+  \ii Figure out the answer.
+  \ii Show that this choice of $c$ actually works.
+  \ii Manually verify that none of the smaller $c$ work.
+\end{walk}
+\end{walkthrough}
+%% You're not expected to write up walkthroughs (unless you really want to).
+%% The source is just for your reference.
+
+\begin{example*}[HMMT 2016 T4, $0\clubsuit$]
+  Let $n > 1$ be an odd integer.
+  On an $n \times n$ chessboard the center square
+  and four corners are deleted.  We wish to group
+  the remaining $n^2-5$ squares into $\frac12(n^2-5)$ pairs,
+  such that the two squares in each pair intersect at exactly one point
+  (i.e.\ they are diagonally adjacent, sharing a single corner).
+
+  For which odd integers $n > 1$ is this possible?
+\end{example*} \printpuid{16HMMTT4}
+
+\begin{walkthrough}
+Let's do some cases first.
+\begin{walk}
+  \ii Can one do $n=3$?
+  \ii Can one do $n=5$?
+  \ii Can one do $n=7$?
+\end{walk}
+In fact, for most $n$ the task is impossible.
+This is a parity argument:
+we seek a coloring the cells by black and white (not the usual checkerboard)
+so that any valid pair has different colors.
+\begin{walk}[resume]
+  \ii Find a coloring of the squares by black and white
+  so that diagonally adjacent squares are opposite colors.
+  (Optionally, find all such colorings.)
+  \ii Use this to narrow down the set
+  of possible $n$ to two values.
+  \ii Wrap up the problem using your earlier work.
+\end{walk}
+\end{walkthrough}
+%% You're not expected to write up walkthroughs (unless you really want to).
+%% The source is just for your reference.
+
+\begin{example*}[\href{https://aops.com/community/p12189456}{JMO 2019/1}, $0\clubsuit$]
+  There are $a+b$ bowls arranged in a row,
+  numbered $1$ through $a+b$,
+  where $a$ and $b$ are given positive integers.
+  Initially, each of the first $a$ bowls contains an apple,
+  and each of the last $b$ bowls contains a pear.
+  A legal move consists of moving an apple from bowl $i$ to bowl $i+1$
+  and a pear from bowl $j$ to bowl $j-1$,
+  provided that the difference $i-j$ is even.
+  We permit multiple fruits in the same bowl at the same time.
+  The goal is to end up with the first $b$ bowls each containing a pear
+  and the last $a$ bowls each containing an apple.
+  Show that this is possible if and only if the product $ab$ is even.
+\end{example*} \printpuid{19JMO1}
+
+\begin{walkthrough}
+First we show that if $ab$ is even then the goal is possible.
+The basic idea is to use induction.
+\begin{walk}
+  \ii If $\min(a,b) \ge 1$, and $a$ and $b$ are opposite parity,
+  show that in one swap one can reduce from $(a,b)$ to $(a-1, b-1)$.
+  \ii If $\min(a,b) \ge 2$, and $a$ and $b$ are both even,
+  show that in two swaps one can reduce from $(a,b)$ to $(a-2, b-2)$.
+  \ii Formulate a set of base cases and complete the proof via induction.
+\end{walk}
+Conversely, we need to show the task is impossible if $ab$ is odd.
+\begin{walk}[resume]
+  \ii Let $X$ denote the number of apples in odd-numbered bowls,
+  and let $Y$ denote the number of pears in odd-numbered bowls.
+  Find a relation between $X$ and $Y$ that does not change under the operation.
+  \ii Use this to show that the task is impossible when $ab$ is odd.
+\end{walk}
+\end{walkthrough}
+%% You're not expected to write up walkthroughs (unless you really want to).
+%% The source is just for your reference.
+
+\begin{example*}[\href{https://aops.com/community/p3160559}{Shortlist 2012 C1}, $0\clubsuit$]
+  There are $n$ positive integers written in a row.
+  Iteratively, Alice chooses two adjacent numbers $x$ and $y$
+  such that $x>y$ and $x$ is to the left of $y$,
+  and replaces the pair $(x,y)$ by either $(y+1,x)$ or $(x-1,x)$.
+  Prove that she can perform at most $n^n$ such steps.
+\end{example*} \printpuid{12SLC1}
+
+\begin{walkthrough}
+A weaker result is easier to see:
+\begin{walk}
+  \ii Look up the term ``lexicographic order'' if you don't know what it means.
+  \ii Show the process must terminate, ignoring the bound of $n^n$.
+\end{walk}
+The hard part is to get the bound $n^n$,
+which doesn't depend on how big the numbers are,
+rather only depends on $n$ itself.
+
+The idea is that we need to pay attention to the \emph{relative order}
+of the numbers, rather than the numbers themselves.
+After all, the numbers on the board can be as large as Alice wants.
+
+So for each board state $B$,
+we define a permutation $\pi_B$ on $\{1,\dots,n\}$
+where the number in the $i$th position of $B$
+is the $\pi_B(i)$th smallest number. For example,
+\[ B = (1337, 42, 2012, 1000, 7)
+  \longmapsto \pi_B = 42531. \]
+There is a little wrinkle: what do we do with ties?
+\begin{walk}[resume]
+  \ii Choose a convention for breaking ties, so that each $B$ gives
+  an unambiguous $\pi_B$, even if some numbers of $B$ are equal.
+  \ii Under your convention, is $\pi_B$ ``monotonic'' in the lexicographic order?
+  \ii If you answered ``yes'' to (d), then prove it.
+  If you answered ``no'', give a different answer to (c) and try again.
+  \ii Prove that the process terminates in at most $n!$ steps.
+\end{walk}
+\end{walkthrough}
+%% You're not expected to write up walkthroughs (unless you really want to).
+%% The source is just for your reference.
+
+\begin{example*}[\href{https://aops.com/community/p4774079}{USAMO 2015/4}, $0\clubsuit$]
+  Steve is piling $m\geq 1$ indistinguishable stones
+  on the squares of an $n\times n$ grid.
+  Each square can have an arbitrarily high pile of stones.
+  After he finished piling his stones in some manner,
+  he can then perform \emph{stone moves}, defined as follows.
+  Consider any four grid squares, which are corners of a rectangle,
+  i.e.\ in positions $(i, k)$, $(i, l)$, $(j, k)$, $(j, l)$
+  for some $1\leq i, j, k, l\leq n$, such that $i<j$ and $k<l$.
+  A stone move consists of either removing one stone from each of
+  $(i, k)$ and $(j, l)$ and moving them to $(i, l)$ and $(j, k)$ respectively,
+  or removing one stone from each of $(i, l)$ and $(j, k)$
+  and moving them to $(i, k)$ and $(j, l)$ respectively.
+
+  Two ways of piling the stones are equivalent if they can be obtained
+  from one another by a sequence of stone moves.
+  How many different non-equivalent ways can Steve pile the stones on the grid?
+\end{example*} \printpuid{15AMO4}
+
+\begin{walkthrough}
+Despite its placement, this is not an especially quick problem,
+which is why it is saved as the last walkthrough.
+It is really rather easy to mess up some details,
+and moreover, it also takes a while to write-up depending on how you do it.
+
+On the other hand, the statement is pretty long-winded.
+Here's a tl;dr: stone moves look like the thing below,
+count the number of equivalence classes under stone moves.
+\begin{center}
+\begin{asy}
+  size(5cm);
+  for (int i=0; i<=6; ++i) {
+    draw( (0,i)--(6,i), grey);
+    draw( (i,0)--(i,6), grey);
+  }
+  draw( (1.5,3.5)--(1.5,1.9), red+1.1, EndArrow(TeXHead));
+  draw( (4.5,1.5)--(4.5,3.1), red+1.1, EndArrow(TeXHead));
+  draw(circle( (1.5, 1.5), 0.3), red+dashed);
+  draw(circle( (4.5, 3.5), 0.3), red+dashed);
+  filldraw(circle( (1.5, 3.5), 0.3), grey, black+1.4);
+  filldraw(circle( (4.5, 1.5), 0.3), grey, black+1.4);
+\end{asy}
+\end{center}
+
+This walkthrough will present the cleanest approach I know of,
+due to Ankan Bhattacharya.
+But you should be aware that most solutions to the problem are much worse.
+
+\begin{walk}
+  \ii Let $r_i$ denote the number of stones in the $i$th row,
+  and $c_j$ the number of stones in the $j$th column.
+  Show that $r_i$ and $c_j$ never change.
+
+  \ii What are $\sum r_i$ and $\sum c_j$?
+
+  \ii Show that the number of $2n$-tuples of integers
+  $(r_1, \dots, r_n, c_1, \dots, c_n)$ satisfying
+  \[ \sum r_i = \sum c_j = (\text{answer to (b)}) \]
+  is $\binom{n+m-1}{m}^2$.
+\end{walk}
+So the classic mistake is to assume that (c) gives the answer.
+In truth, this is only the beginning of the problem.
+To see why, let's agree that the \emph{signature}
+of a piling is the tuple described in (c).
+
+Thus we have checked that if two pilings are equivalent,
+then they have the same signature.
+But this does not mean the number of piling methods
+is equal to the number of signatures!\footnote{For example,
+  here is another invariant:
+  the total number of stones is $m$, which takes on only one value.
+  But that certainly does not mean the answer is $1$.}
+\begin{walk}[resume]
+  \ii There are two more statements we have to prove
+  to finish the problem. What are they?
+\end{walk}
+
+We'll actually now remodel the problem as follows.
+Forget about the entire grid.
+Instead, consider a blackboard where we write $(x,y)$
+for every stone in row $x$ and column $y$.
+Thus there should be exactly $m$ ordered pairs
+on the blackboard, one for each stone.
+
+Thus, a stone move amounts to switching the $y$-coordinates
+of two ordered pairs.
+
+\begin{walk}[resume]
+  \ii Consider two pilings which have the same signature.
+  Describe an algorithm to reach one from the other,
+  using the blackboard analogy instead of the grid.
+
+  \ii Moreover, show that every possible signature is achievable.
+  (Why is this step necessary?)
+
+  \ii Put everything together to complete the solution.
+\end{walk}
+\end{walkthrough}
+%% You're not expected to write up walkthroughs (unless you really want to).
+%% The source is just for your reference.
+
+\newpage
+
+% ========================================
+\section*{Practice problems}
+\goals{45}{60}
+
+\epigraph{Your light is expended. It is finished.}
+{In Utter Darkness,
+from the \emph{StarCraft II: Wings of Liberty} campaign}
+Small warning: this unit is not short.
+Tough coach makes the beginners sweat too :P
+%%fakesubsection{When is it possible?}
+
+\begin{problem}[\href{https://aops.com/community/p213007}{USAMO 2005/1}, $3\clubsuit$]
+  Determine all composite positive integers $n$ for which
+  it is possible to arrange all divisors of $n$ that are greater than $1$
+  in a circle so that no two adjacent divisors are relatively prime.
+\end{problem} \printpuid{05AMO1}
+
+%% Type your solution to USAMO 2005/1 (\href{https://otis.evanchen.cc/arch/05AMO1/}{05AMO1}), proposed by Zuming Feng here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p10124154}{Canada 2018/3}, $5\clubsuit$]
+  Two positive integers $a$ and $b$ are \emph{prime-related}
+  if either $a/b$ or $b/a$ is prime.
+  Find all positive integers $n$ with at least three divisors
+  for which it's possible to arrange all the divisors of $n$
+  in a circle, so that any two adjacent divisors are prime-related.
+\end{problem} \printpuid{18CAN3}
+
+\begin{claim}
+    We claim the only $n$ that works is $n$ that is not a square or a power of a prime.
+\end{claim}
+
+\begin{proof}
+    Prime powers clearly fail as there will always be either $b \mid a = p$ or $a \mid b = p$ for arbitrary prime $p$.
+    Also note that perfect squares have an odd number of divisors : this implies that the parity changes after each ``step" , which is a contradiction.
+\par
+We now show that all other $n$ work, proceeding via induction.
+    Suppose $n$ is of the form $p^aq^b$ for primes $p$,$q$ consider an $(a+1)\times (b+1)$ where entry $(i,i)$ has $p^iq^i$ in it. A valid cycle in this case would be identical to a hamiltonian cycle. 
+    \newline
+    We continue to add prime factors as our inductive step. Assume that there exists a construction for $n=k$ where the terms in the circle are $x_1$, $x_2$,$\cdots ,x_n$. We show that $n = k \cdot p_i^{e_i}$ works. Namely the construction is \[x_1,x_2,\cdots,x_j ,px_j-1,\cdots px_2,p^2x_2,\cdots p^2x_j \].
+\end{proof}
+
+\begin{problem}[\href{https://aops.com/community/p5641811}{Russia 2015/11.5}, $2\clubsuit$]
+  Kelvin the Frog jumps along the coordinate line landing at integer points.
+  It starts from point $0$; its first jump has length $3$, the second one has length $5$,
+  the third one has length $9$, and so on (the $k$th jump has length $2^k+1$).
+  The direction of each jump is chosen by Kelvin.
+  Is it possible that Kelvin eventually visits all points
+  with positive integer coordinates at least once?
+\end{problem} \printpuid{15RUS115}
+
+
+Let Kelvin jump $n+1$ times to the right from initial position $x$. This would imply Kelvin is at position \[x+(2^{k+1}+1)+(2^{k+2}+1)+(2^{k+3}+1) + \dots + (2^{k+n}+1)+(2^{k+n+1}+1)  = x-2^k+n\]. Set $n = 2^k \pm 1$ and now the conclusion is clear.
+
+\begin{reqproblem}[\href{https://aops.com/community/p10124121}{Canada 2018/1, added by Michael Yang}, $3\clubsuit$]
+  Consider an arrangement of tokens in the plane,
+  not necessarily at distinct points.
+  We are allowed to apply a sequence of moves of the following kind:
+  select a pair of tokens at points $A$ and $B$ and move
+  both of them to the midpoint of $A$ and $B$.
+  We say that an arrangement of $n$ tokens is \emph{collapsible} if it is
+  possible to end up with all $n$ tokens at the same point after a finite
+  number of moves.
+
+  Find all integers $n \ge 1$ such that:
+  every arrangement of $n$ tokens is collapsible.
+\end{reqproblem} \printpuid{18CAN1}
+
+\begin{claim}
+    We claim only powers of 2 work.
+\end{claim}
+We prove the necessity first
+\begin{proof}
+    We will induct on the exponent  $2^k$ , $\forall k \ge 0$. 
+    For $k = 0$ we have $2^0=1$ which is obviously true. We assume the truth for $n = 2^k$. Now split $2^{k+1}$ into two piles of $w^k$, which we assumed to be collapsible. We can pair up one pile on one point and the other half on another point , to which they will collapse to their midpoint.
+
+We now prove that non powers of two won't work.First assume the contrary. Place $n-1$ points on the origin and 1 point at the point $(1,0).$ As the total sum of the coordinates after any individual move is invariant, the final collapsible point will be )$(\frac 1 n,0 )$ However when we repeatedly take the midpoint , we end up wiht a denominator with a power of 2, contradicting our assumption.
+\end{proof}
+\begin{problem}[\href{https://aops.com/community/p3589498}{Argentina TST 2011/2}, $2\clubsuit$]
+  A wizard kidnaps $31$ members from party $A$, $28$ members from party $B$,
+  $23$ members from party $C$, and $19$ members from party $D$,
+  keeping them isolated in individual rooms in his castle.
+  Every day, the kidnapped people can walk in the park and talk with each other.
+  However, when three members of three different parties
+  start talking with each other,
+  the wizard reconverts them to the fourth party
+  (there are no conversations with $4$ or more people involved).
+
+  For which parties could all of the kidnapped people belong to the same party
+  at some point in time?
+\end{problem} \printpuid{11ARGTST2}
+
+\begin{claim}
+    We claim all the kidnapped people can end up at party B.
+\end{claim}
+\begin{proof}
+    Let the notation $(a,b,c,d)$ denote the number of peple in party $A$,$B$,$C$,$D$ respectively.
+    The construction for group B is as follows: 
+    \begin{align}
+        & \text{Convert to party D : 4 time} \\
+        & \text{Convert to party C twice} \\
+        & \text{Convert to party B : 26 times} 
+    \end{align}
+    For proof that this is the only such possible endpoint for the tuple, take each element of the tuple modulo $4$. Particularly, each activity decreases the number of people in each party by $1 \pmod 4$. By performing the above construction on the initial tuple modulo $4$ , $(3,0,3,3)$ we get $(0,1,0,0)$ which obviously works.
+        
+    
+\end{proof}
+
+\begin{reqproblem}[\href{https://aops.com/community/p23323816}{PAGMO 2021/1}, $5\clubsuit$]
+  There are $n \geq 2$ coins numbered from $1$ to $n$.
+  These coins are placed around a circle, not necessarily in order.
+
+  In each turn, if we are on the coin numbered $i$,
+  we will jump to the one $i$ places from it,
+  always in a clockwise order, beginning with coin number $1$.
+  
+  Find all values of $n$ for which there exists an arrangement
+  of the coins in which every coin will be visited.
+\end{reqproblem} \printpuid{21PAGMO1}
+ 
+\begin{claim}
+    We claim only even n works.
+\end{claim}
+Define a cycle to start from $1$ and end at $n$. In a cycle you can only visit a coin once as if it was otherwise, the sequence of moves would then loop.
+\newline
+All coins must be visited must be visited once as if $n$ is visited twice, the sequence would stagnate at $n$.
+This implies that the order of coin visitations must be $1$,$2$,$\cdots$ , $n$. The total distance travelled when performing the moves is simply $1+2+$,$\cdots$,$n = \frac{n(n-1)}{2}$. For odd $n$ (i.e )$n\equiv 2m+1 \; \text{for arbitrary m} \in \mathbb Z^+$ the total distance is divisible by $n$ which is absurb as it would imply $1$ and $n$ would occupy the same spot in the circle.
+
+We now prove that $n$ even works. The configuration that can be generalised is as: $1$,$n-2$,$n-4$,$\cdots$,$2$,$n$,$n-1$,$n-3$,$\cdots$,$3$.
+
+\begin{problem}[\href{https://aops.com/community/p25006181}{Russia 2022/9.3}, $3\clubsuit$]
+  Suppose $200$ positive integers are written in a row.
+  For any two adjacent numbers in a row, the right one is
+  either $9$ times greater than or $2$ times smaller than the left one.
+  Can the sum of these $200$ numbers equal $24^{2022}$?
+\end{problem} \printpuid{22RUS93}
+
+%% Type your solution to Russia 2022/9.3 (\href{https://otis.evanchen.cc/arch/22RUS93/}{22RUS93}) here ...
+
+%% --------------------------------------------------
+
+%%fakesubsection{Mins and maxes}
+
+\begin{problem}[\href{https://aops.com/community/p10683748}{Tuymaada 2018/J6}, $3\clubsuit$]
+  The numbers $1, 2, \dots, 1024$ are written on a blackboard.
+  The following procedure is performed ten times:
+  partition the numbers on the board into disjoint pairs,
+  and replace each pair with its nonnegative difference.
+  Determine all possible values of the final number.
+\end{problem} \printpuid{18TMDJ6}
+
+We claim only even numbers are possible, with them being \[0,2,4,\dots,1020,1022\].
+Note that the parity of numbers produced remains invariant after a single procedure. This implies that the sum of the numbers on the board remains invariant after a single procedure. This implies that the possible numbers must have the same parity as \[1+2+\dots +1023+1024 \equiv 0 \pmod 2\]
+As for a construction for the evens stated above, we can show that for $2x$ , $1 \le x \le 511$ , we can pair :
+\[(1,2x+2),(3,4),\dots ,(1023,1024) \]
+This results in us achieving:
+$$\{\underbrace{1, 1, \ldots, 1}_{511\textrm\ \text{times}}, 2x+1\}$$
+After a final procedure we will end up with:
+$$\{\underbrace{0, 0, \ldots, 0}_{255\textrm\ \text{times}}, 2k\}.$$
+Now to get $0$, we can pair up consecutive integers 
+$$(1,2),\dots , (1023,024)\rightarrow \underbrace{\{1,1,\dots , 1\}}_{512\textrm\ \text{times}}\rightarrow \underbrace{\{0,0,\dots , 0\}}_{255\textrm\ \text{times}}$$
+This shows $0$ is achieveable and completes the proof
+
+
+
+
+\begin{problem}[\href{https://aops.com/community/p12786342}{JBMO SL 2018 C3}, $3\clubsuit$]
+  The cells of a $8 \times 8$ table are initially white.
+  Alice and Bob play a game.
+  First Alice paints $n$ of the cells in red.
+  Then Bob chooses $4$ rows and $4$ columns
+  from the table and paints all cells in them in black.
+  Alice wins if there is at least one red cell left.
+  Find the least value of $n$ such that Alice
+  can win the game no matter how Bob plays.
+\end{problem} \printpuid{18JBMOSLC3}
+
+%% Type your solution to JBMO SL 2018 C3 (\href{https://otis.evanchen.cc/arch/18JBMOSLC3/}{18JBMOSLC3}) here ...
+We claim the least value of $n$ for which the condition holds is $n=13$.
+A valid construction is as the following: 
+\par
+\begin{asy}
+    size(5cm);
+    for (int i=0; i<8; ++i)
+    { for (int j=0; j<8; ++j)
+    {
+        draw(shift(i,j)*unitsquare); draw(shift(i,j)*unitsquare);
+    }
+    }
+
+    for (int k=0; k<8; ++k)
+    {
+        dot((k+0.5,k+0.5), blue);
+    }
+
+    dot((0.5,7.5), blue);
+    dot((7.5,0.5), blue);
+    dot((6.5,1.5), blue);
+    dot((5.5,2.5), blue);
+    dot((4.5,3.5), blue);
+\end{asy}
+Now we prove that $n \le 12$ doesn't work
+For $n \le 8$ Bob can clearly win. For $9 le n \le 12$ by the pigeon hole principle at least one row will contain at least 2 red cells. Bob's winning strategy in this instance is for him to colour all rows/columns with at least 2 red squares in black and then colour the rest appropriately.
+$\square$
+
+\begin{problem}[\href{https://aops.com/community/p21498580}{USAMO 2021/4}, $5\clubsuit$]
+  A finite set $S$ of positive integers has the property that,
+  for each $s\in S$, and each positive integer divisor $d$ of $s$,
+  there exists a unique element $t\in S$ satisfying $\gcd(s,t) = d$.
+  (The elements $s$ and $t$ could be equal.)
+
+  Given this information, find all possible values for the
+  number of elements of $S$.
+\end{problem} \printpuid{21AMO4}
+
+We claim the answer is $|S| = 2^k$, $\forall k \in \mathbb Z^{\ge 0}$ or $|S| = 0$.
+
+\paragraph{Construction.} 
+The case for $|S| = 0$ is obvious. For any nonnegative k
+the set S is constructed via selecting $1$ prime from a set of $2k$ pairs $p_1,q_1\dots,p_k,q_k$.
+We now prove this necessity
+\paragraph{Necessity. }
+
+
+
+\begin{problem}[\href{https://aops.com/community/p24774633}{USAMO 2022/5}, $9\clubsuit$]
+  A function $f \colon \RR \to \RR$ is
+  \emph{essentially increasing}
+  if $f(s) \leq f(t)$ holds
+  whenever $s\leq t$ are real numbers such that $f(s)\neq 0$ and $f(t)\neq 0$.
+
+  Find the smallest integer $k$ such that
+  for any $2022$ real numbers $x_1$, $x_2$, \dots, $x_{2022}$,
+  there exist $k$ essentially increasing functions $f_1, \dots, f_k$ such that
+  \[ f_1(n) + f_2(n) + \dotsb + f_k(n) = x_n
+  \qquad \hbox{ for every } n = 1, 2, \dots, 2022. \]
+\end{problem} \printpuid{22AMO5}
+
+%% Type your solution to USAMO 2022/5 (\href{https://otis.evanchen.cc/arch/22AMO5/}{22AMO5}), proposed by Gabriel Carroll here ...
+
+%% --------------------------------------------------
+
+%%fakesubsection{Show it's possible}
+
+\begin{problem}[\href{https://aops.com/community/p16433166}{Cyberspace Competition 2020/5}, $3\clubsuit$]
+  There are $2020$ positive integers written on a blackboard.
+  Every minute, Zuming erases two of the numbers and replaces them
+  by their sum, difference, product, or quotient.
+  (For example, if Zuming erases the numbers $6$ and $3$,
+  he may replace them with one of the numbers in the set
+  $\{6+3, 6-3, 3-6, 6\times 3, 6\div 3, 3\div 6\}
+  = \{9, 3, -3, 18, 2, \frac{1}{2}\}$.)
+
+  After $2019$ minutes, Zuming arrives
+  at the single number $-2020$ on the blackboard.
+  Show that it is possible for Zuming to have arrived
+  at the single number $2020$ on the blackboard instead,
+  under the same rules and using the same $2020$ starting integers.
+\end{problem} \printpuid{20CYBER5}
+
+%% Type your solution to Cyberspace Competition 2020/5 (\href{https://otis.evanchen.cc/arch/20CYBER5/}{20CYBER5}), proposed by Alex Song here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p12752812}{Shortlist 2018 C1}, $5\clubsuit$]
+  Let $n \ge 3$ be an integer.
+  Prove that there exists a set $S$ of $2n$ distinct positive integers
+  such that for any $m \in \{2, \dots, n\}$,
+  the set $S$ can be partitioned into
+  two sets with cardinalities $m$ and $2n-m$ with equal sums.
+\end{problem} \printpuid{18SLC1}
+
+%% Type your solution to Shortlist 2018 C1 (\href{https://otis.evanchen.cc/arch/18SLC1/}{18SLC1}), proposed by ISL here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p2672506}{Canada 2012, added by Carlos Rodriguez}, $5\clubsuit$]
+  A number of robots are placed on the squares of a finite, rectangular
+  grid of squares. A square can hold any number of robots. Every edge of
+  each square of the grid is classified as either passable or impassable.
+  All edges on the boundary of the grid are impassable. You can give any
+  of the commands up, down, left, or right.
+
+  All of the robots then simultaneously try to move in the specified
+  direction. If the edge adjacent to a robot in that direction is
+  passable, the robot moves across the edge and into the next square.
+  Otherwise, the robot remains on its current square. You can then give
+  another command of up, down, left, or right, then another, for as long
+  as you want. Suppose that for any individual robot, and any square on
+  the grid, there is a finite sequence of commands that will move that
+  robot to that square. Prove that you can also give a finite sequence of
+  commands such that all of the robots end up on the same square at the
+  same time.
+\end{problem} \printpuid{12CAN4}
+
+%% Type your solution to Canada 2012, added by Carlos Rodriguez (\href{https://otis.evanchen.cc/arch/12CAN4/}{12CAN4}) here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p15952780}{JMO 2020/1}, $2\clubsuit$]
+  Let $n \ge 2$ be an integer.
+  Carl has $n$ books arranged on a bookshelf.
+  Each book has a height and a width.
+  No two books have the same height,
+  and no two books have the same width.
+
+  Initially, the books are arranged in
+  increasing order of height from left to right.
+  In a \emph{move}, Carl picks any two adjacent books
+  where the left book is wider and shorter than the right book,
+  and swaps their locations.
+  Carl does this repeatedly until no further moves are possible.
+
+  Prove that regardless of how Carl makes his moves,
+  he must stop after a finite number of moves, and when he does stop,
+  the books are sorted in increasing order of width from left to right.
+\end{problem} \printpuid{20JMO1}
+
+%% Type your solution to JMO 2020/1 (\href{https://otis.evanchen.cc/arch/20JMO1/}{20JMO1}), proposed by Milan Haiman here ...
+Let the i'th book be represented as $(h_i,w_i)$ , wher $h_i$ and $w_i$ are the height and weight of book i respectively. Note that the number of height inversions monotonically decreases by $1$ after each move and given that it cannot go below 0, this proves that the number of moves will be finite. Note that for the k'th widest book that isn't in the k'th position $1 \le k \le n$, all the books to the left of k will be smaller $w_i$ that $w_{ki}$.
+This implies it will never be swapped left and will be swapped to the right. 
+The notion of bubble sort can be applied to all books $(1 \le k \le n)$ and so we are done!
+
+
+
+\begin{problem}[\href{https://aops.com/community/p2888023}{ELMO 1999/2}, $2\clubsuit$]
+  Mr.\ Fat moves around on the lattice points
+  according to the following rules:
+  From point $(x,y)$ he may move to any of the points
+  $(y,x)$, $(3x,-2y)$, $(-2x,3y)$, $(x+1,y+4)$ and $(x-1,y-4)$.
+  Show that if he starts at $(0,1)$ he can never get to $(0,0)$.
+\end{problem} \printpuid{99ELMO2}
+
+%% Type your solution to ELMO 1999/2 (\href{https://otis.evanchen.cc/arch/99ELMO2/}{99ELMO2}) here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[Added by Adilet Zauytkhan, $3\clubsuit$]
+  The numbers $1, 2, \dots, 1000$ are written on the board.
+  In a turn, one can erase any two numbers $a$ and $b$
+  and replace them with $ab$ and $a^2+b^2$.
+  Prove that it is impossible to get at least $700$
+  identical numbers by performing such operations.
+\end{problem} \printpuid{19LEULER}
+
+%% Type your solution to Added by Adilet Zauytkhan (\href{https://otis.evanchen.cc/arch/19LEULER/}{19LEULER}) here ...
+
+%% --------------------------------------------------
+
+%%fakesubsection{Counting}
+
+\begin{problem}[\href{https://aops.com/community/p12195861}{USAMO 2019/4}, $3\clubsuit$]
+  Let $n$ be a nonnegative integer.
+  Determine the number of ways to choose sets
+  $S_{ij} \subseteq \{1, 2, \dots, 2n\}$,
+  for all $0 \le i \le n$ and $0 \le j \le n$
+  (not necessarily distinct), such that
+  \begin{itemize}
+  \ii $|S_{ij}| = i+j$, and
+  \ii $S_{ij} \subseteq S_{kl}$ if $0 \le i \le k \le n$
+  and $0 \le j \le l \le n$.
+  \end{itemize}
+\end{problem} \printpuid{19AMO4}
+
+%% Type your solution to USAMO 2019/4 (\href{https://otis.evanchen.cc/arch/19AMO4/}{19AMO4}), proposed by Ricky Liu here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p3181485}{TSTST 2013/7}, $3\clubsuit$]
+  A country has $n$ cities, labelled $1,2,3,\dots,n$.
+  It wants to build exactly $n-1$ roads between certain pairs of cities
+  so that every city is reachable from every other city via some sequence of roads.
+  However, it is not permitted to put roads between pairs of cities
+  that have labels differing by exactly $1$,
+  and it is also not permitted to put a road between cities $1$ and $n$.
+  Let $T_n$ be the total number of possible ways to build these roads.
+  \begin{enumerate}[(a)]
+  \ii For all odd $n$, prove that $T_n$ is divisible by $n$.
+  \ii For all even $n$, prove that $T_n$ is divisible by $n/2$.
+  \end{enumerate}
+\end{problem} \printpuid{13TSTST7}
+
+%% Type your solution to TSTST 2013/7 (\href{https://otis.evanchen.cc/arch/13TSTST7/}{13TSTST7}) here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p353058}{USAMO 1996/4}, $3\clubsuit$]
+  An $n$-term sequence $(x_1, x_2, \dots, x_n)$
+  in which each term is either $0$ or $1$ is called a binary sequence of length $n$.
+  Let $a_n$ be the number of binary sequences of length $n$ containing
+  no three consecutive terms equal to $0$, $1$, $0$ in that order.
+  Let $b_n$ be the number of binary sequences of length $n$ that
+  contain no four consecutive terms equal to 0, 0, 1, 1 or 1, 1, 0, 0 in that order.
+  Prove that $b_{n+1} = 2a_n$ for all positive integers $n$.
+\end{problem} \printpuid{96AMO4}
+
+%% Type your solution to USAMO 1996/4 (\href{https://otis.evanchen.cc/arch/96AMO4/}{96AMO4}) here ...
+
+%% --------------------------------------------------
+
+%%fakesubsection{Extra}
+
+\begin{problem}[\href{https://aops.com/community/p12623584}{ELMO SL 2019 C1}, $3\clubsuit$]
+  Let $n \ge 3$ be a fixed positive integer.
+  Elmo is playing a game with his clone.
+  Initially, $n\geq 3$ points are given on a circle.
+  On a player's turn, that player must draw a triangle
+  using three unused points as vertices, without creating any crossing edges.
+  The first player who cannot move loses.
+  If Elmo's clone goes first and players alternate turns,
+  which player wins for each $n$?
+\end{problem} \printpuid{19ESLC1}
+
+%% Type your solution to ELMO SL 2019 C1 (\href{https://otis.evanchen.cc/arch/19ESLC1/}{19ESLC1}), proposed by Milan Haiman here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p343871}{USAMO 1997/1}, $2\clubsuit$]
+  Let $p_1, p_2, p_3, \dots$ be the prime numbers
+  listed in increasing order,
+  and let $0 < x_0 < 1$ be a real number between 0 and 1.
+  For each positive integer $k$, define
+  \[ x_k = \begin{cases} 0 & \mbox{if} \; x_{k-1} = 0, \\[.1in]
+  {\displaystyle \left\{ \frac{p_k}{x_{k-1}} \right\}}
+  & \mbox{if} \; x_{k-1} \neq 0,
+  \end{cases}  \]
+  where $\{x\}$ denotes the fractional part of $x$.
+  Find, with proof, all $x_0$ satisfying $0 < x_0 < 1$
+  for which the sequence $x_0, x_1, x_2, \dots$ eventually becomes $0$.
+\end{problem} \printpuid{97AMO1}
+
+%% Type your solution to USAMO 1997/1 (\href{https://otis.evanchen.cc/arch/97AMO1/}{97AMO1}) here ...
+
+%% --------------------------------------------------
+
+\begin{reqproblem}[\href{https://aops.com/community/p13302539}{USAMTS 4/1/31, added by Ryan Li}, $5\clubsuit$]
+  A group of $100$ friends stands in a circle.
+  Initially, one person has $2019$ mangoes, and no one else has mangoes.
+  The friends split the mangoes according to the following rules:
+  \begin{itemize}
+  \ii sharing: to share, a friend passes two mangoes to the left
+  and one mango to the right.
+  \ii eating: the mangoes must also be eaten and enjoyed.
+  However, no friend wants to be selfish and eat too many mangoes.
+  Every time a person eats a mango, they must also pass another mango to the right.
+  \end{itemize}
+  A person may only share if they have at least three mangoes,
+  and they may only eat if they have at least two mangoes.
+  The friends continue sharing and eating,
+  until so many mangoes have been eaten that no one is able to share or eat anymore.
+  Show that there are exactly eight people stuck with mangoes,
+  which can no longer be shared or eaten.
+\end{reqproblem} \printpuid{USMT4131}
+
+%% Type your solution to USAMTS 4/1/31, added by Ryan Li (\href{https://otis.evanchen.cc/arch/USMT4131/}{USMT4131}) here ...
+
+%% --------------------------------------------------
+
+\begin{problem}[\href{https://aops.com/community/p2669956}{JMO 2012/4}, $3\clubsuit$]
+  Let $\alpha$ be an irrational number with $0 < \alpha < 1$,
+  and draw a circle in the plane whose circumference has length $1$.
+  Given any integer $n\ge 3$,
+  define a sequence of points $P_1$, $P_2$, \dots, $P_n$ as follows.
+  First select any point $P_1$ on the circle, and for $2\le k\le n$ define $P_k$
+  as the point on the circle for which the length of arc $P_{k-1}P_k$ is $\alpha$,
+  when travelling counterclockwise around the circle from $P_{k-1}$ to $P_k$.
+  Suppose that $P_a$ and $P_b$ are the nearest adjacent points on either side of $P_n$.
+  Prove that $a+b\le n$.
+\end{problem} \printpuid{12JMO4}
+
+%% Type your solution to JMO 2012/4 (\href{https://otis.evanchen.cc/arch/12JMO4/}{12JMO4}), proposed by Sam Vandervelde here ...
+
+%% --------------------------------------------------
+
+\begin{reqproblem}[\href{https://aops.com/community/p1932923}{Shortlist 2009 C1}, $9\clubsuit$]
+  Consider $2009$ cards, each having one gold side and one black side,
+  lying on parallel on a long table.
+  Initially all cards show their gold sides.
+  Two players, standing by the same long side of the table,
+  play a game with alternating moves.
+  Each move consists of choosing a block of $50$ consecutive cards,
+  the leftmost of which is showing gold, and
+  turning them all over,
+  so those which showed gold now show black and vice versa.
+  The last player who can make a legal move wins.
+
+  \begin{enumerate}[(a)]
+  \ii Does the game necessarily end?
+  \ii Does there exist a winning strategy for the starting player?
+  \end{enumerate}
+\end{reqproblem} \printpuid{09SLC1}
+
+%% Type your solution to Shortlist 2009 C1 (\href{https://otis.evanchen.cc/arch/09SLC1/}{09SLC1}) here ...
+
+%% --------------------------------------------------
+\begin{solution}
+
+\begin{problem}[\href{https://aops.com/community/p23322888}{PAGMO 2021/4}, $2\clubsuit$]
+  LucÃ­a multiplies some positive one-digit numbers (not necessarily distinct)
+  and obtains a number $n$ greater than $10$.
+  Then, she multiplies all the digits of $n$ and obtains an odd number.
+  Find all possible values of the units digit of $n$.
+\end{problem} \printpuid{21PAGMO4}
+
+%% Type your solution to PAGMO 2021/4 (\href{https://otis.evanchen.cc/arch/21PAGMO4/}{21PAGMO4}) here ...
+
+%% --------------------------------------------------
+
+\end{document}
